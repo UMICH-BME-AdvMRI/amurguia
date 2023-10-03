@@ -149,8 +149,8 @@ for SMS_t = 1:length(rf)
     rf_SMS(SMS_t) = rf(SMS_t).*P;
 end
 
-[msig,m]=sliceprofile(rf_SMS,grad_G_per_cm,t_vec_ms./1000,T1_ms,T2_ms,pos,df_Hz);
-%[msig,m]=sliceprofile(rf,grad_G_per_cm,t_vec_ms./1000,T1_ms,T2_ms,pos,df_Hz);
+%[msig,m]=sliceprofile(rf_SMS,grad_G_per_cm,t_vec_ms./1000,T1_ms,T2_ms,pos,df_Hz);
+[msig,m]=sliceprofile(rf,grad_G_per_cm,t_vec_ms./1000,T1_ms,T2_ms,pos,df_Hz);
 
 
 % 3.2 plots (do for 0 and 200 Hz off-resonance)
