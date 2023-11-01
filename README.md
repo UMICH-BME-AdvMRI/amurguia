@@ -4,4 +4,4 @@ Much of the code from hw1 is from Brian Hargreaves' blochsim tutorial code: http
 I edited/added to it for the homework problems.
 
 Much of the code from hw2 is from Brian Hargreaves' EPG tutorial code: https://web.stanford.edu/~bah/software/epg/.
-I edited/added to it for the homework problems.
+I edited/added to it for the homework problems.  It is copied into the folder epg_funcs_hargreaves.
