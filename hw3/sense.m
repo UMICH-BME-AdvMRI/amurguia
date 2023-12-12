@@ -66,10 +66,11 @@ for ii = 1:nx
 
         % set up the I matrix (overlaping pixels)
         % size 8 x 1
-        I = im_samp_R2(p1_loc, p2_loc, :);
+        I = squeeze(imageData_R2(p1_loc, p2_loc, :));
         
         % set up the C matrix (coil sensitivities)
-        C = [coilmaps(ii, p1_loc, :), coilmaps(ii, p2_loc, :)]; % need to check the dimensions of this
+        C = squeeze([coilmaps(ii, p1_loc, :); coilmaps(ii, p2_loc, :)]); % need to check the dimensions of this
+        C = C';
         
         % calculate the p matrix using the pseudoinverse
         p = pinv(C)*I;
@@ -80,5 +81,10 @@ for ii = 1:nx
     end
 end
 
+figure
+imagesc(abs(recon_im));
+diff_im = im_fully_samp - recon_im;
+figure
+imagesc(abs(diff_im));
 
 
