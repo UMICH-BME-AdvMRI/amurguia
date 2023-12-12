@@ -55,4 +55,59 @@ imagesc(im_samp_R2);
 
 %imageData_R2
 recon_im = zeros(nx, ny);
+R = 2;
+
+% I = Cp
+% calculate the locations for the values in the p matrix
+for ii = 1:nx
+    for jj = 1:(ny/R/2)
+        p1_loc = jj; % check this, I think it is wrong
+        p2_loc = jj + (ny/R); % check this, I think it is wrong
+
+        % set up the I matrix (overlaping pixels)
+        % size 8 x 1
+        I = im_samp_R2(p1_loc, p2_loc, :);
+        
+        % set up the C matrix (coil sensitivities)
+        C = [coilmaps(ii, p1_loc, :), coilmaps(ii, p2_loc, :)]; % need to check the dimensions of this
+        
+        % calculate the p matrix using the pseudoinverse
+        p = pinv(C)*I;
+
+        recon_im(ii,p1_loc) = p(1);
+        recon_im(ii,p2_loc) = p(2);
+
+    end
+end
+
+%%
+%%%%% continue from here 
+
+% for nx = 1:Nx
+%     for ny = Ny/R/2 + 1 : Ny/R*3/2
+%         % Calculate source pixel locations
+%         ny1 = ny;
+%         ny2 = ny + Ny/R;
+%         if ny2 > Ny
+%             ny2 = mod(ny2,Ny);
+%         end
+% 
+%         % Recover pixel values via pseudoinverse
+%         pixels_aliased = squeeze(imgs_R2(nx,ny,:)); % 8 x 1
+%         smap_weights = [squeeze(smaps(nx,ny1,:)),...
+%                         squeeze(smaps(nx,ny2,:))]; % 8 x 2;
+%         pixels_unaliased = pinv(smap_weights)*pixels_aliased; % 2 x 1
+%         
+%         % Allocate recovered pixel values
+%         img(nx,ny1) = pixels_unaliased(1);
+%         img(nx,ny2) = pixels_unaliased(2);
+%     end
+% end
+% 
+% diff = img - img_fs;
+% 
+% figure;
+% subplot(121); im(abs(img));
+% subplot(122); im(abs(diff));
+% sgtitle('2c. SENSE recon for R = 2. Left is reconstructed image. Right is difference image')
 
