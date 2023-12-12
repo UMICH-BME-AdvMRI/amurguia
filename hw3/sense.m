@@ -80,34 +80,5 @@ for ii = 1:nx
     end
 end
 
-%%
-%%%%% continue from here 
 
-% for nx = 1:Nx
-%     for ny = Ny/R/2 + 1 : Ny/R*3/2
-%         % Calculate source pixel locations
-%         ny1 = ny;
-%         ny2 = ny + Ny/R;
-%         if ny2 > Ny
-%             ny2 = mod(ny2,Ny);
-%         end
-% 
-%         % Recover pixel values via pseudoinverse
-%         pixels_aliased = squeeze(imgs_R2(nx,ny,:)); % 8 x 1
-%         smap_weights = [squeeze(smaps(nx,ny1,:)),...
-%                         squeeze(smaps(nx,ny2,:))]; % 8 x 2;
-%         pixels_unaliased = pinv(smap_weights)*pixels_aliased; % 2 x 1
-%         
-%         % Allocate recovered pixel values
-%         img(nx,ny1) = pixels_unaliased(1);
-%         img(nx,ny2) = pixels_unaliased(2);
-%     end
-% end
-% 
-% diff = img - img_fs;
-% 
-% figure;
-% subplot(121); im(abs(img));
-% subplot(122); im(abs(diff));
-% sgtitle('2c. SENSE recon for R = 2. Left is reconstructed image. Right is difference image')
 
