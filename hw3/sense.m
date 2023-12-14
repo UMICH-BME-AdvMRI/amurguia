@@ -18,6 +18,7 @@ end
 im_fully_samp = abs(sum(imageData,3));
 figure
 imagesc(im_fully_samp);
+title("coil combined image - fully sampled")
 
 %% 2b
 
@@ -44,6 +45,7 @@ end
 im_samp_R2 = abs(sum(imageData_R2,3));
 figure
 imagesc(im_samp_R2);
+title("undersampled")
 
 %% 2c
 
@@ -56,35 +58,36 @@ imagesc(im_samp_R2);
 %imageData_R2
 recon_im = zeros(nx, ny);
 R = 2;
+acc = ny/R;
 
 % I = Cp
 % calculate the locations for the values in the p matrix
 for ii = 1:nx
-    for jj = 1:(ny/R/2)
-        p1_loc = jj; % check this, I think it is wrong
-        p2_loc = jj + (ny/R); % check this, I think it is wrong
-
+    for jj = 1:acc
         % set up the I matrix (overlaping pixels)
         % size 8 x 1
-        I = squeeze(imageData_R2(p1_loc, p2_loc, :));
+
+        I = squeeze(imageData_R2(jj, ii, :));
         
         % set up the C matrix (coil sensitivities)
-        C = squeeze([coilmaps(ii, p1_loc, :); coilmaps(ii, p2_loc, :)]); % need to check the dimensions of this
+        C = squeeze([coilmaps(jj, ii, :); coilmaps(jj+acc, ii, :)]); % need to check the dimensions of this
         C = C';
         
         % calculate the p matrix using the pseudoinverse
         p = pinv(C)*I;
 
-        recon_im(ii,p1_loc) = p(1);
-        recon_im(ii,p2_loc) = p(2);
+        recon_im(jj,ii) = p(1);
+        recon_im(jj+acc,ii) = p(2);
 
     end
 end
 
 figure
 imagesc(abs(recon_im));
+title("reconstructed")
 diff_im = im_fully_samp - recon_im;
 figure
 imagesc(abs(diff_im));
+title("difference")
 
 
