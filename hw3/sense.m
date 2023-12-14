@@ -35,10 +35,14 @@ end
 
 [nx_R2, ny_R2, ncoils_R2] = size(kspaceData_R2);
 imageData_R2 = zeros(size(kspaceData_R2));
+imageData_not_coils = zeros(size(kspaceData_R2));
+
 
 % convert from k-space to image space and multiply by scaling factor
 for i_R2 = 1:ncoils_R2
     imageData_R2(:,:,i_R2) = (ifftshift(ifft2(kspaceData_R2(:,:,i)))).*coilmaps(:,:,i);
+    %imageData_R2(:,:,i_R2) = (ifftshift(ifft2(ifftshift(kspaceData_R2(:,:,i))))).*coilmaps(:,:,i);
+    imageData_not_coils(:,:,i_R2) = (ifftshift(ifft2(kspaceData_R2(:,:,i))));
 end
 
 % combine info from the different coils and plot
@@ -56,7 +60,7 @@ title("undersampled")
 %image.
 
 %imageData_R2
-recon_im = zeros(nx, ny);
+recon_im = complex(zeros(nx, ny));
 R = 2;
 acc = ny/R;
 
@@ -67,11 +71,13 @@ for ii = 1:nx
         % set up the I matrix (overlaping pixels)
         % size 8 x 1
 
-        I = squeeze(imageData_R2(jj, ii, :));
+        I = squeeze(imageData_not_coils(jj, ii, :));
+        %I = squeeze(imageData_R2(jj, ii, :));
+
         
         % set up the C matrix (coil sensitivities)
         C = squeeze([coilmaps(jj, ii, :); coilmaps(jj+acc, ii, :)]); % need to check the dimensions of this
-        C = C';
+        C = C.';
         
         % calculate the p matrix using the pseudoinverse
         p = pinv(C)*I;
@@ -84,10 +90,49 @@ end
 
 figure
 imagesc(abs(recon_im));
-title("reconstructed")
+title("reconstructed R = 2")
 diff_im = im_fully_samp - recon_im;
 figure
 imagesc(abs(diff_im));
-title("difference")
+title("difference R = 2")
 
+%% 2d
 
+% SENSE R=4 Reconstruction: Repeat the SENSE reconstruction for R=4. Display the
+% reconstructed image and the difference compared to the fully-sampled image, like before.
+
+recon_im = complex(zeros(nx, ny));
+R = 4;
+acc = ny/R;
+
+% I = Cp
+% calculate the locations for the values in the p matrix
+for ii = 1:nx
+    for jj = 1:acc
+        % set up the I matrix (overlaping pixels)
+        % size 8 x 1
+
+        I = squeeze(imageData_R2(jj, ii, :));
+        
+        % set up the C matrix (coil sensitivities)
+        C = squeeze([coilmaps(jj, ii, :); coilmaps(jj+acc, ii, :); coilmaps(jj+2*acc, ii, :); coilmaps(jj+3*acc, ii, :)]); % need to check the dimensions of this
+        C = C.';
+        
+        % calculate the p matrix using the pseudoinverse
+        p = pinv(C)*I;
+
+        recon_im(jj,ii) = p(1);
+        recon_im(jj+acc,ii) = p(2);
+        recon_im(jj+2*acc,ii) = p(3);
+        recon_im(jj+3*acc,ii) = p(4);
+
+    end
+end
+
+figure
+imagesc(abs(recon_im));
+title("reconstructed R = 4")
+diff_im = im_fully_samp - recon_im;
+figure
+imagesc(abs(diff_im));
+title("difference R = 4")
