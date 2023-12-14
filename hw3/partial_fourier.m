@@ -1,5 +1,7 @@
 %% Partial Fourier Imaging
 
+% zero filled recon - part a
+
 % Zero-Filled Reconstruction: Load Data_Assignment3_Problem1.mat into MATLAB. This
 % contains fully-sampled k-space data from a T1-weighted brain scan. The data only has a
 % single receiver coil (to keep things simple for now!). 
@@ -23,13 +25,28 @@ kspace_zero = complex(zeros(nx,ny));
 
 kspace_zero(num_skip_side:ny-num_skip_side,:) = kspaceData_SingleCoil(num_skip_side:ny-num_skip_side,:);
 
-im = ifftshift(ifft2(kspace_zero));
+im_under = ifftshift(ifft2(kspace_zero));
+im_full = ifftshift(ifft2(kspaceData_SingleCoil));
 
 figure
-imagesc(abs(im));
-title("magnitude")
+imagesc(abs(im_under));
+title("magnitude under")
 
 figure
-imagesc(angle(im));
-title("phase")
+imagesc(angle(im_under));
+title("phase under")
+
+diff_im = im_full - im_under;
+
+figure
+imagesc(abs(diff_im));
+title("magnitude diff")
+
+figure
+imagesc(angle(diff_im));
+title("phase diff")
+
+
+
+
 
